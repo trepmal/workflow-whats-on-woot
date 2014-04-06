@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>bundleid</key>
+	<string>kdl-woot</string>
+	<key>connections</key>
+	<dict>
+		<key>0A7F94DA-8824-4BEA-892C-25D9882A4143</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>A791CB52-31A2-448C-96BF-B24B3434FD2F</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+			</dict>
+		</array>
+	</dict>
+	<key>createdby</key>
+	<string>Kailey Lampert</string>
+	<key>description</key>
+	<string>Show all current woots.</string>
+	<key>disabled</key>
+	<false/>
+	<key>name</key>
+	<string>What's on Woot!?</string>
+	<key>objects</key>
+	<array>
+		<dict>
+			<key>type</key>
+			<string>alfred.workflow.output.largetype</string>
+			<key>uid</key>
+			<string>93359534-1C72-43E1-83C7-1AA36CFFAAE9</string>
+			<key>version</key>
+			<integer>0</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>argumenttype</key>
+				<integer>2</integer>
+				<key>escaping</key>
+				<integer>63</integer>
+				<key>keyword</key>
+				<string>woot</string>
+				<key>script</key>
+				<string>ob_start();
+//fwrite(fopen('wwoot.txt','w'),'hi' );
+require_once('extension_utils.php');
+$utils = new ExtensionUtils();
+
+$url = "http://api.woot.com/1/sales/current.rss";
+
+$c = curl_init();
+curl_setopt($c, CURLOPT_URL, $url);
+curl_setopt($c, CURLOPT_RETURNTRANSFER, 1);
+curl_setopt($c, CURLOPT_CONNECTTIMEOUT, 5);
+$buffer = curl_exec($c);
+curl_close($c);
+
+$xml = simplexml_load_string($buffer);
+
+$results = array();
+
+foreach( $xml-&gt;channel-&gt;item as $item ) {
+	$title = $item-&gt;title;
+	$link = $item-&gt;link;
+
+	preg_match( '/http:\/\/([a-z]*)\./', $link, $match );
+	$woot = $match[1];
+	$url = array_shift( explode( '?', $link ) );
+	$results[] = array(
+		'title' =&gt; htmlspecialchars( $title ),
+		'icon' =&gt; "$woot-woot.png",
+		'valid' =&gt; '',
+		'uid' =&gt; '',
+		'subtitle' =&gt; $url,
+		'arg' =&gt; $link
+	);
+}
+
+echo $utils-&gt;toXml( $results );
+$ob = ob_get_clean();
+echo $ob;
+fwrite(fopen('wwoot.txt','w'), $ob );</string>
+				<key>title</key>
+				<string>What's on Woot!?</string>
+				<key>type</key>
+				<integer>1</integer>
+				<key>withspace</key>
+				<false/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.input.scriptfilter</string>
+			<key>uid</key>
+			<string>0A7F94DA-8824-4BEA-892C-25D9882A4143</string>
+			<key>version</key>
+			<integer>0</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>autopaste</key>
+				<false/>
+				<key>clipboardtext</key>
+				<string>{query}</string>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.output.clipboard</string>
+			<key>uid</key>
+			<string>CDDA25C2-B620-4305-8680-621CD922A246</string>
+			<key>version</key>
+			<integer>0</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>plusspaces</key>
+				<false/>
+				<key>url</key>
+				<string>{query}</string>
+				<key>utf8</key>
+				<true/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.action.openurl</string>
+			<key>uid</key>
+			<string>A791CB52-31A2-448C-96BF-B24B3434FD2F</string>
+			<key>version</key>
+			<integer>0</integer>
+		</dict>
+	</array>
+	<key>readme</key>
+	<string></string>
+	<key>uidata</key>
+	<dict>
+		<key>0A7F94DA-8824-4BEA-892C-25D9882A4143</key>
+		<dict>
+			<key>ypos</key>
+			<real>40</real>
+		</dict>
+		<key>93359534-1C72-43E1-83C7-1AA36CFFAAE9</key>
+		<dict>
+			<key>ypos</key>
+			<real>10</real>
+		</dict>
+		<key>A791CB52-31A2-448C-96BF-B24B3434FD2F</key>
+		<dict>
+			<key>ypos</key>
+			<real>180</real>
+		</dict>
+		<key>CDDA25C2-B620-4305-8680-621CD922A246</key>
+		<dict>
+			<key>ypos</key>
+			<real>130</real>
+		</dict>
+	</dict>
+	<key>webaddress</key>
+	<string>http://trepmal.com/alfredapp/current-item-on-woot/</string>
+</dict>
+</plist>
