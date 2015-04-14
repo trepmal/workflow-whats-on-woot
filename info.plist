@@ -45,9 +45,16 @@
 				<integer>63</integer>
 				<key>keyword</key>
 				<string>woot</string>
+				<key>queuedelaycustom</key>
+				<integer>1</integer>
+				<key>queuedelayimmediatelyinitially</key>
+				<false/>
+				<key>queuedelaymode</key>
+				<integer>0</integer>
+				<key>queuemode</key>
+				<integer>1</integer>
 				<key>script</key>
 				<string>ob_start();
-//fwrite(fopen('wwoot.txt','w'),'hi' );
 require_once('extension_utils.php');
 $utils = new ExtensionUtils();
 
@@ -84,7 +91,7 @@ foreach( $xml-&gt;channel-&gt;item as $item ) {
 echo $utils-&gt;toXml( $results );
 $ob = ob_get_clean();
 echo $ob;
-fwrite(fopen('wwoot.txt','w'), $ob );</string>
+</string>
 				<key>title</key>
 				<string>What's on Woot!?</string>
 				<key>type</key>
